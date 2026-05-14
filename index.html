@@ -54,8 +54,9 @@
         text-align: center;
         margin-top: 0;
         margin-bottom: 25px;
-        font-size: 34px;
+        font-size: 32px;
         letter-spacing: 2px;
+        line-height: 1.2;
     }
 
     .subtitle {
@@ -155,7 +156,10 @@
 
 <div class="container">
 
-    <h1>ASTEROIDS</h1>
+    <h1>
+        ASTEROIDS<br>
+        SCORE CALCULATOR
+    </h1>
 
     <div class="subtitle">
         Calculate your final score from the YouTube game
@@ -169,6 +173,7 @@
         type="text"
         id="collisions"
         placeholder="Enter a positive integer"
+        autocomplete="off"
     >
 
     <label for="coinsMissed">
@@ -176,6 +181,10 @@
     </label>
 
     <select id="coinsMissed">
+
+        <option value="" selected>
+            Select
+        </option>
 
         <option value="0">
             0 (I got all of them!)
@@ -212,10 +221,8 @@ function calculateScore() {
         .value
         .trim();
 
-    const coinsMissed =
-        parseInt(
-            document.getElementById("coinsMissed").value
-        );
+    const coinsMissedValue =
+        document.getElementById("coinsMissed").value;
 
     const errorDiv =
         document.getElementById("error");
@@ -231,6 +238,14 @@ function calculateScore() {
     // --------------------------------------------------
 
     const integerPattern = /^[0-9]+$/;
+
+    if (collisionsInput === "") {
+
+        errorDiv.textContent =
+            "Please enter the number of collisions.";
+
+        return;
+    }
 
     if (!integerPattern.test(collisionsInput)) {
 
@@ -251,16 +266,20 @@ function calculateScore() {
         return;
     }
 
+    if (coinsMissedValue === "") {
+
+        errorDiv.textContent =
+            "Please select how many coins you missed.";
+
+        return;
+    }
+
+    const coinsMissed =
+        parseInt(coinsMissedValue);
+
     // --------------------------------------------------
     // LOGARITHMIC SCORE
     // --------------------------------------------------
-
-    /*
-        Designed so:
-        - 0 collisions + 0 missed = 1000
-        - Average player scores ~500-800
-        - Heavy penalties only at high collisions
-    */
 
     const collisionPenalty =
         Math.log2(collisions + 1) * 180;
@@ -565,8 +584,6 @@ class Saucer {
         ctx.strokeStyle = "white";
         ctx.lineWidth = 2;
 
-        // Top dome
-
         ctx.beginPath();
 
         ctx.moveTo(x - s * 0.35, y - s * 0.15);
@@ -575,8 +592,6 @@ class Saucer {
         ctx.lineTo(x + s * 0.35, y - s * 0.15);
 
         ctx.stroke();
-
-        // Bottom
 
         ctx.beginPath();
 
@@ -588,16 +603,12 @@ class Saucer {
 
         ctx.stroke();
 
-        // Separator
-
         ctx.beginPath();
 
         ctx.moveTo(x - s * 0.60, y - s * 0.15);
         ctx.lineTo(x + s * 0.60, y - s * 0.15);
 
         ctx.stroke();
-
-        // Bullets
 
         for (const b of this.bullets) {
 
